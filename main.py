@@ -92,10 +92,17 @@ def main():
     # Click the submit button
     click_button(driver, submit_button_id)
         
-    page_source = driver.page_source
+    pageHTML = driver.page_source
     
+    soup = beautifulsoup(pageHTML, 'html.parser')
     
+    print("\n",
+                  "======================= PROFILE RESULTS =========================")
     
+    # return experiences 
+
+        
+        
     while(True):
         pass
     # finally:
@@ -105,3 +112,21 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# soup = beautifulsoup(pageHTML, 'html.parser')
+# jobs_list = soup.find('tbody', id='search-results-content')
+# jobs = jobs_list.find_all('a', class_ = 'job_link')
+
+
+
+# jobs_container = soup.find('tbody', id='search-results-content')
+
+# # Find all job links within the container
+# jobs = jobs_container.find_all('a', class_='job-link')
+
+# # Print the job links
+# for job in jobs:
+#     print(job)
+#     print(job.get_text(strip=True))
+#     print(job['href'])
