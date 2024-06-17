@@ -9,58 +9,52 @@ import time
 import mysql.connector as mysql
 from bs4 import BeautifulSoup as beautifulsoup
 import re
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from scrapeFunctions import *
+from datetime import *
+with open(r'../credential/DBlogin.txt') as f: 
+    d = dict([line.strip('\n').split(' ', 1) for line in f]) 
 
-def read_credentials(file_path):
-    with open(file_path) as f:
-        details = f.read().split("\n")
-        username = details[0]
-        password = details[1]
-        weburl = details[2]
-    return username, password, weburl
+cnx = mysql.connect(user=d['user'],
+                    password=d['password'],
+                    host=d['host'],
+                    port=d['port'],
+                    database=d["database"])
 
-def setup_driver(chrome_driver_path):
-    service = Service(chrome_driver_path)
-    options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(service=service, options=options)
-    return driver
 
-def login_to_website(driver, url, username_id, password_id, submit_button_id, username, password):
-    driver.get(url)
+# Create a cursor object
+cursor = cnx.cursor(buffered=True)
 
-    username_field = WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.ID, username_id))
-    )
-    username_field.send_keys(username)
+# SQL statement to insert a new row into the Jobs table
+add_job = """
+INSERT INTO Jobs (JobexternalID, JobName, JobID, DateRetrieved, Source, URL)
+VALUES (%s, %s, %s, %s, %s, %s)
+"""
 
-    password_field = WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.ID, password_id))
-    )
-    password_field.send_keys(password)
+# Data to be inserted
+job_data = (
+    3,  # JobexternalID
+    'Database Administrator',  # JobName
+    98765,  # JobID
+    datetime.now(),  # DateRetrieved
+    'CompanySite',  # Source
+    'https://example.com/job/98765'  # URL
+)
 
-    password_field.send_keys(Keys.RETURN)
-
-def click_button(driver, button_id):
-    submit_button = WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable((By.ID, button_id))
-    )
-    submit_button.click()
-
-def get_page_source(driver, url):
-    driver.get(url)
+try:
+    # Execute the SQL statement
+    cursor.execute(add_job, job_data)
     
-    WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.TAG_NAME, "body"))
-    )
-    
-    # Get the page source
-    page_source = driver.page_source
-    return page_source
+    # Commit the transaction
+    cnx.commit()
+    print("Job inserted successfully.")
+except mysql.Error as err:
+    print(f"Error: {err}")
+    cnx.rollback()
+finally:
+    # Close the cursor and connection
+    cursor.close()
+    cnx.close()
+
 
 
 def main():
