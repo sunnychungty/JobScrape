@@ -11,18 +11,23 @@ from bs4 import BeautifulSoup as beautifulsoup
 import re
 from scrapeFunctions import *
 from datetime import *
+
+
 with open(r'../credential/DBlogin.txt') as f: 
     d = dict([line.strip('\n').split(' ', 1) for line in f]) 
 
-cnx = mysql.connect(user=d['user'],
-                    password=d['password'],
-                    host=d['host'],
-                    port=d['port'],
-                    database=d["database"])
+def sql_connection():
+    cnx = mysql.connect(user=d['user'],
+                        password=d['password'],
+                        host=d['host'],
+                        port=d['port'],
+                        database=d["database"])
 
 
-# Create a cursor object
-cursor = cnx.cursor(buffered=True)
+    # Create a cursor object
+    cursor = cnx.cursor(buffered=True)
+    
+    return cursor
 
 # SQL statement to insert a new row into the Jobs table
 add_job = """
@@ -61,40 +66,31 @@ def main():
     # Path to the credentials file and ChromeDriver executable
     credentials_path = r"..\credential\login.txt"
     chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
-
     # Read credentials from file
     myusername, mypassword, url = read_credentials(credentials_path)
-
     # Set up the driver
     driver = setup_driver(chrome_driver_path)
 
-    # try:
-    # URL and element IDs for the login process
     username_id = "input28"
     password_id = "input36"
     submit_button_id = "preferences_prompt_submit"
 
-    # Log in to the website
+    # Log in
     login_to_website(driver, url, username_id, password_id, submit_button_id, myusername, mypassword)
 
-    # Wait for the next page to load
     time.sleep(10)
-
-    # Print the title of the next page to verify
-    print(driver.title)
 
     # Click the submit button
     click_button(driver, submit_button_id)
         
     pageHTML = driver.page_source
     
-    soup = beautifulsoup(pageHTML, 'html.parser')
+    # soup = beautifulsoup(pageHTML, 'html.parser')
     
-    print("\n",
-                  "======================= PROFILE RESULTS =========================")
+    extract_from_page_source(pageHTML)
     
-    # return experiences 
-
+    for job in jobs:
+        jobID = re.findall(r'\/job\/(\d+)\/', job)
         
         
     while(True):

@@ -42,3 +42,27 @@ def main():
     
 if __name__ == "__main__":
     main()
+    
+with open (r'../../credential/page_source_test.txt') as f:
+    doc_ = f.read()
+# doc_ = doc_.replace("\n", "")
+soup = beautifulsoup(doc_, 'html.parser')
+
+
+
+# soup = beautifulsoup(pageHTML, 'html.parser')
+# jobs_list = soup.find('tbody', id='search-results-content')
+# jobs = jobs_list.find_all('a', class_ = 'job_link')
+
+
+
+jobs_container = soup.find('tbody', id='search-results-content')
+
+# Find all job links within the container
+jobs = jobs_container.find_all('a', class_='job-link')
+
+# # Print the job links
+# for job in jobs:
+#     print(job)
+#     print(job.get_text(strip=True))
+#     print(job['href'])

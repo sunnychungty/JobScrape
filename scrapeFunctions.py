@@ -60,3 +60,8 @@ def get_page_source(driver, url):
     # Get the page source
     page_source = driver.page_source
     return page_source
+
+def extract_from_page_source(pageHTML):
+    soup = beautifulsoup(pageHTML, 'html.parser')
+    jobs_container = soup.find('tbody', id='search-results-content')
+    jobs = jobs_container.find_all('a', class_='job-link')
