@@ -65,3 +65,5 @@ def extract_from_page_source(pageHTML):
     soup = beautifulsoup(pageHTML, 'html.parser')
     jobs_container = soup.find('tbody', id='search-results-content')
     jobs = jobs_container.find_all('a', class_='job-link')
+    
+    return jobs

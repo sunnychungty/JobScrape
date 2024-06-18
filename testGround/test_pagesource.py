@@ -43,26 +43,38 @@ def main():
 if __name__ == "__main__":
     main()
     
-with open (r'../../credential/page_source_test.txt') as f:
+with open (r'../credential/page_source_test.txt') as f:
     doc_ = f.read()
 # doc_ = doc_.replace("\n", "")
 soup = beautifulsoup(doc_, 'html.parser')
 
-
-
-# soup = beautifulsoup(pageHTML, 'html.parser')
-# jobs_list = soup.find('tbody', id='search-results-content')
-# jobs = jobs_list.find_all('a', class_ = 'job_link')
-
+if soup.find('a', class_ = 'more-link button'):
+    print(soup.find('a', class_ = 'more-link button')['href'])
 
 
 jobs_container = soup.find('tbody', id='search-results-content')
 
-# Find all job links within the container
+# # Find all job links within the container
 jobs = jobs_container.find_all('a', class_='job-link')
 
-# # Print the job links
-# for job in jobs:
-#     print(job)
-#     print(job.get_text(strip=True))
-#     print(job['href'])
+# # # Print the job links
+for job in jobs:
+    jobID_match = re.search(r'\/job\/(\d+)\/', str(job))
+    jobID = jobID_match.group(1)
+    print(jobID)
+
+#     # print(job.get_text(strip=True))
+#     # print(job['href'])
+cursor, cnx = sql_connection()
+
+if is_dup(jobID, cursor, cnx):
+    print(f"jobID {jobID} is dup")
+
+
+jobid = 666172
+query = f"SELECT COUNT(*) FROM Jobs_temp WHERE JobexternalID = {jobid}"
+print(query)
+cursor.execute(query)
+result = cursor.fetchone()
+if result[0] > 0:
+    print('yes')
