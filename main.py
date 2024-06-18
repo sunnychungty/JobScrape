@@ -101,6 +101,8 @@ def main():
 
     # Log in
     # login_to_website(driver, url, username_id, password_id, submit_button_id, myusername, mypassword)
+    
+    # General site
     driver.get("https://careers.pageuppeople.com/513/cw/en/listing")
     time.sleep(5)
 
@@ -137,39 +139,11 @@ def main():
                 print(f"An error occurred: {e}")
         else:
             break
-                
-        
-        
-        
-                
-            
-            
-        
-        
+             
     while(True):
         pass
-    # finally:
-    #     # Close the driver
-    #     driver.quit()
 
 
 if __name__ == "__main__":
     main()
 
-
-# soup = beautifulsoup(pageHTML, 'html.parser')
-# jobs_list = soup.find('tbody', id='search-results-content')
-# jobs = jobs_list.find_all('a', class_ = 'job_link')
-
-
-
-# jobs_container = soup.find('tbody', id='search-results-content')
-
-# # Find all job links within the container
-# jobs = jobs_container.find_all('a', class_='job-link')
-
-# # Print the job links
-# for job in jobs:
-#     print(job)
-#     print(job.get_text(strip=True))
-#     print(job['href'])
