@@ -116,6 +116,7 @@ def extract_ID(cursor, cnx, credentials_path, driver):
         
 
         for job in jobs:
+            job_count += 1
             jobID_match = re.search(r'\/job\/(\d+)\/', str(job))
             if jobID_match:
                 jobID = jobID_match.group(1)
@@ -125,7 +126,6 @@ def extract_ID(cursor, cnx, credentials_path, driver):
                 else:
                     add_id(job, jobID, cursor, cnx)
                     job_count_new += 1
-            job_count += 1
         # Check for the "More Jobs" button and click it
         more_jobs_button = soup.find('a', class_='more-link button')
         if more_jobs_button:
