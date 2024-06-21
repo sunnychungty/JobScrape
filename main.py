@@ -56,7 +56,7 @@ def add_id(job, JobID, cursor, cnx):
         new_job_id = max_job_id + 1
         
         add_job = """
-        INSERT INTO Jobs_temp (JobexternalID, JobName, JobID, DateRetrieved, Source, URL)
+        INSERT INTO JobsOpengin_temp (job_externalRef, job_title, JobID, DateRetrieved, JobSource, job_url)
         VALUES (%s, %s, %s, %s, %s, %s)
         """
         # Assuming job contains the job external ID and name
@@ -103,8 +103,8 @@ def extract_ID(cursor, cnx, credentials_path, driver):
 
     job_count = 0
     job_count_new = 0
+    
     n = 1
-
     while True:
         # Get page source and soup
         pageHTML = driver.page_source
@@ -130,6 +130,7 @@ def extract_ID(cursor, cnx, credentials_path, driver):
         more_jobs_button = soup.find('a', class_='more-link button')
         if more_jobs_button:
             print(f'Processing information on page {n + 1}')
+            n += 1
             try:
                 driver.get('https://careers.pageuppeople.com/' + soup.find('a', class_='more-link button')['href'])
                 time.sleep(5)
@@ -142,10 +143,10 @@ def extract_ID(cursor, cnx, credentials_path, driver):
 def main():
         # sql connection and read credential
     cursor, cnx = sql_connection()
-    chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
+    # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
     credentials_path = r"..\credential\login.txt"
 
-    # chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
+    chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
     driver = setup_driver(chrome_driver_path)
 
     extract_ID(cursor, cnx, credentials_path, driver)

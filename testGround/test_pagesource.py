@@ -39,10 +39,26 @@ def main():
     
     print(driver.page_source)
     
+chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
+
+driver = setup_driver(chrome_driver_path)    
+driver.get("https://www.seek.com.au/jobs/in-All-Melbourne-VIC")
+html_source = driver.page_source
+soup = beautifulsoup(html_source, 'html.parser')
+
+containers = soup.find_all('article', class_ = "y735df0 _1iz8dgs6m")
+job_containers = soup.find_all('article', class_='y735df0 y735df1 _1iz8dgs7i _1iz8dgs6e _1iz8dgs9q _1iz8dgs8m _1iz8dgsh _1iz8dgs66 _1iz8dgs5e _12jtennb _12jtenn9 _12jtenna _94v4w18 _94v4w1b _1iz8dgs32 _1iz8dgs35')
+
+
+
+for foo in job_containers:
+    job_data = {}
     
-if __name__ == "__main__":
-    main()
+    job_data['job_id'] = container.get('data-job-id')
     
+    print(job_data)
+    
+
 with open (r'../credential/page_source_test.txt') as f:
     doc_ = f.read()
 # doc_ = doc_.replace("\n", "")
@@ -51,30 +67,7 @@ soup = beautifulsoup(doc_, 'html.parser')
 if soup.find('a', class_ = 'more-link button'):
     print(soup.find('a', class_ = 'more-link button')['href'])
 
-
-jobs_container = soup.find('tbody', id='search-results-content')
-
-# # Find all job links within the container
-jobs = jobs_container.find_all('a', class_='job-link')
-
-# # # Print the job links
-for job in jobs:
-    jobID_match = re.search(r'\/job\/(\d+)\/', str(job))
-    jobID = jobID_match.group(1)
-    print(jobID)
-
 #     # print(job.get_text(strip=True))
 #     # print(job['href'])
 cursor, cnx = sql_connection()
 
-if is_dup(jobID, cursor, cnx):
-    print(f"jobID {jobID} is dup")
-
-
-jobid = 666172
-query = f"SELECT COUNT(*) FROM Jobs_temp WHERE JobexternalID = {jobid}"
-print(query)
-cursor.execute(query)
-result = cursor.fetchone()
-if result[0] > 0:
-    print('yes')
