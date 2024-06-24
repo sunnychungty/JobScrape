@@ -25,7 +25,7 @@ def setup_driver(chrome_driver_path):
 
 def main():
     # Path to the credentials file and ChromeDriver executable
-    chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
+    # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
 
     driver = setup_driver(chrome_driver_path)
 
@@ -37,10 +37,10 @@ def main():
         EC.presence_of_element_located((By.TAG_NAME, "body"))
     )
     
-    print(driver.page_source)
+    # print(driver.page_source)
     
-# chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
-chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
+chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
+# chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
 
 driver = setup_driver(chrome_driver_path)    
 driver.get("https://www.seek.com.au/jobs/in-All-Melbourne-VIC")
@@ -51,7 +51,7 @@ containers = soup.find_all('article', class_ = "y735df0")
 
 jobs = re.findall(r'data\-job\-id\=\"(\d+)\"', str(containers))
 
-job_containers = soup.find_all('article', class_='y735df0 y735df1 _1iz8dgs7i _1iz8dgs6e _1iz8dgs9q _1iz8dgs8m _1iz8dgsh _1iz8dgs66 _1iz8dgs5e _12jtennb _12jtenn9 _12jtenna _94v4w18 _94v4w1b _1iz8dgs32 _1iz8dgs35')
+# job_containers = soup.find_all('article', class_='y735df0 y735df1 _1iz8dgs7i _1iz8dgs6e _1iz8dgs9q _1iz8dgs8m _1iz8dgsh _1iz8dgs66 _1iz8dgs5e _12jtennb _12jtenn9 _12jtenna _94v4w18 _94v4w1b _1iz8dgs32 _1iz8dgs35')
 
 
 
