@@ -14,7 +14,37 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+import mysql.connector as mysql
 
+def open_msg():
+    print("""
+              _         _       _____                                       
+         | |       | |     / ____|                                      
+         | |  ___  | |__  | (___    ___  _ __   __ _  _ __    ___  _ __ 
+     _   | | / _ \ | '_ \  \___ \  / __|| '__| / _` || '_ \  / _ \| '__|
+    | |__| || (_) || |_) | ____) || (__ | |   | (_| || |_) ||  __/| |   
+     \____/  \___/ |_.__/ |_____/  \___||_|    \__,_|| .__/  \___||_|   
+                                                     | |                
+                                                     |_|                
+    """
+    )
+
+                                     
+def sql_connection(d):
+    cnx = mysql.connect(user=d['user'],
+                        password=d['password'],
+                        host=d['host'],
+                        port=d['port'],
+                        database=d["database"])
+
+
+    # Create a cursor object
+    cursor = cnx.cursor(buffered=True)    
+    print("Connected to Database")
+    
+    return cursor, cnx
+                                     
+                                     
 def read_credentials(file_path):
     with open(file_path) as f:
         details = f.read().split("\n")

@@ -17,18 +17,6 @@ with open(r'../credential/DBlogin.txt') as f:
     d = dict([line.strip('\n').split(' ', 1) for line in f]) 
 
 
-def sql_connection():
-    cnx = mysql.connect(user=d['user'],
-                        password=d['password'],
-                        host=d['host'],
-                        port=d['port'],
-                        database=d["database"])
-
-
-    # Create a cursor object
-    cursor = cnx.cursor(buffered=True)    
-    return cursor, cnx
-
 def is_dup(jobid, cursor, cnx):
     query = f"SELECT COUNT(*) FROM JobsOpening_temp WHERE job_externalRef = {jobid}"
     try:
@@ -92,10 +80,10 @@ def add_id(job, JobID, cursor, cnx, jobSource):
         cnx.rollback()
         
 def extract_Seek_ID(cursor, cnx, driver):
-    chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
+    # chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
     # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
     
-    driver = setup_driver(chrome_driver_path)    
+    # driver = setup_driver(chrome_driver_path)    
     driver.get("https://www.seek.com.au/jobs/")
     
     job_count = 0
@@ -127,7 +115,8 @@ def extract_Seek_ID(cursor, cnx, driver):
                 print(f"An error occurred: {e}")
         else:
             print(f"All job openings processed, {job_count} found, {job_count_new} are new")
-            break
+            driver.close()
+            return False
 
 
 def extract_Monash_ID(cursor, cnx, credentials_path, driver):
@@ -185,24 +174,43 @@ def extract_Monash_ID(cursor, cnx, credentials_path, driver):
                 print(f"An error occurred: {e}")
         else:
             print(f"All job openings processed, {job_count} found, {job_count_new} are new")
-            break
+            driver.close()
+            return False
+
+def input_panel():
+    x = input("""What are we Scraping today?
+              1. All
+              2. Monash
+              3. Unimelb
+              4. Seek
+              """)
+    return x
+
 
 def main():
         # sql connection and read credential
-    cursor, cnx = sql_connection()
-    # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
+    open_msg()
+    cursor, cnx = sql_connection(d)
+    chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
     credentials_path = r"..\credential\login.txt"
+    # chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
 
-    chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
-    driver = setup_driver(chrome_driver_path)
+    x = input_panel()
 
-    # extract_Monash_ID(cursor, cnx, credentials_path, driver)
-    extract_Seek_ID(cursor, cnx, driver)
-
-
-             
-    while(True):
+    driver = setup_driver(chrome_driver_path)    
+    
+    if x == "1":
+        # extract_Monash_ID(cursor, cnx, credentials_path, driver)
+        extract_Seek_ID(cursor, cnx, driver)
+    elif x == "2":
+        extract_Monash_ID(cursor, cnx, credentials_path, driver)
+    elif x == "4":
+        extract_Seek_ID(cursor, cnx, driver)
+    else:
         pass
+             
+    # while(True):
+    #     pass
 
 
 if __name__ == "__main__":
