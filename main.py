@@ -30,7 +30,7 @@ def sql_connection():
     return cursor, cnx
 
 def is_dup(jobid, cursor, cnx):
-    query = f"SELECT COUNT(*) FROM Jobs_temp WHERE JobexternalID = {jobid}"
+    query = f"SELECT COUNT(*) FROM JobsOpening_temp WHERE job_externalRef = {jobid}"
     try:
         # Execute the query
         cursor.execute(query)
@@ -46,8 +46,8 @@ def is_dup(jobid, cursor, cnx):
         return False
     
 
-def add_id(job, JobID, cursor, cnx):
-    query = "SELECT MAX(JobID) FROM Jobs_temp;"
+def add_id(job, JobID, cursor, cnx, jobSource):
+    query = "SELECT MAX(JobID) FROM JobsOpening_temp;"
     
     try:
         cursor.execute(query)
@@ -56,22 +56,31 @@ def add_id(job, JobID, cursor, cnx):
         new_job_id = max_job_id + 1
         
         add_job = """
-        INSERT INTO JobsOpengin_temp (job_externalRef, job_title, JobID, DateRetrieved, JobSource, job_url)
+        INSERT INTO JobsOpening_temp (job_externalRef, job_title, JobID, DateRetrieved, JobSource, job_url)
         VALUES (%s, %s, %s, %s, %s, %s)
         """
         # Assuming job contains the job external ID and name
-        job_name = job.get_text(strip=True)  # Assuming job is a BeautifulSoup object
 
         # Data to be inserted
-        job_data = (
-            JobID,  # JobexternalID
-            job_name,  # JobName
-            new_job_id,  # JobID
-            datetime.now(),  # DateRetrieved
-            'Monash',  # Source
-            f'https://careers.pageuppeople.com/513/ci/en/job/{JobID}/'  # URL
-        )
-
+        if jobSource == "Monash":
+            job_name = job.get_text(strip=True)  # Assuming job is a BeautifulSoup object
+            job_data = (
+                JobID,  # JobexternalID
+                job_name,  # JobName
+                new_job_id,  # JobID
+                datetime.now(),  # DateRetrieved
+                'Monash',  # Source
+                f'https://careers.pageuppeople.com/513/ci/en/job/{JobID}/'  # URL
+            )
+        else:
+            job_data = (
+                JobID,  # JobexternalID
+                "",  # JobName
+                new_job_id,  # JobID
+                datetime.now(),  # DateRetrieved
+                jobSource,  # Source
+                f'https://www.seek.com.au/job/{JobID}'  # URL
+            )
         # Execute the SQL statement
         cursor.execute(add_job, job_data)
         
@@ -81,9 +90,47 @@ def add_id(job, JobID, cursor, cnx):
     except mysql.Error as err:
         print(f"Error: {err}")
         cnx.rollback()
+        
+def extract_Seek_ID(cursor, cnx, driver):
+    chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
+    # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
+    
+    driver = setup_driver(chrome_driver_path)    
+    driver.get("https://www.seek.com.au/jobs/")
+    
+    job_count = 0
+    job_count_new = 0
+    n = 1
+    while True:
+        html_source = driver.page_source
+        soup = beautifulsoup(html_source, 'html.parser')
+        
+        containers = soup.find_all('article', class_ = "y735df0")
+        
+        jobs = re.findall(r'data\-job\-id\=\"(\d+)\"', str(containers))
+
+        for jobID in jobs:
+            job_count += 1
+            if is_dup(jobID, cursor, cnx):
+                print(f"jobID {jobID} already exist in DB")
+                continue
+            else:
+                add_id("", jobID, cursor, cnx, "Seek")
+                job_count_new += 1
+        if soup.find('span', class_ = "y735df0 _1iz8dgs8 _1iz8dgs4"):
+            print(f'Processing information on page {n + 1}')
+            n += 1
+            try:
+                driver.get(f'https://www.seek.com.au/jobs?page={n}')
+                time.sleep(5)
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        else:
+            print(f"All job openings processed, {job_count} found, {job_count_new} are new")
+            break
 
 
-def extract_ID(cursor, cnx, credentials_path, driver):
+def extract_Monash_ID(cursor, cnx, credentials_path, driver):
     myusername, mypassword, url = read_credentials(credentials_path)
 
     # Set up the driver
@@ -124,7 +171,7 @@ def extract_ID(cursor, cnx, credentials_path, driver):
                     print(f"jobID {jobID} already exist in DB")
                     continue
                 else:
-                    add_id(job, jobID, cursor, cnx)
+                    add_id(job, jobID, cursor, cnx, "Monash")
                     job_count_new += 1
         # Check for the "More Jobs" button and click it
         more_jobs_button = soup.find('a', class_='more-link button')
@@ -149,7 +196,8 @@ def main():
     chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
     driver = setup_driver(chrome_driver_path)
 
-    extract_ID(cursor, cnx, credentials_path, driver)
+    # extract_Monash_ID(cursor, cnx, credentials_path, driver)
+    extract_Seek_ID(cursor, cnx, driver)
 
 
              
