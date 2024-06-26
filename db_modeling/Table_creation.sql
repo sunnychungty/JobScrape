@@ -12,7 +12,8 @@ CREATE TABLE JobsOpening (
     page_html TEXT,
     scrape_status bit,
     JobSource VARCHAR(50),
-    DateRetrieved DATETIME
+    DateRetrieved DATETIME,
+    Location VARCHAR(50)
 );
 
 CREATE TABLE JobsOpening_temp (
@@ -28,7 +29,8 @@ CREATE TABLE JobsOpening_temp (
     page_html TEXT,
     scrape_status bit,
     JobSource VARCHAR(50),
-    DateRetrieved DATETIME
+    DateRetrieved DATETIME,
+	Location VARCHAR(50)
 );
 
 -- Job_app Table
@@ -48,3 +50,13 @@ CREATE TABLE Company (
     contact_person VARCHAR(255),
     contact VARCHAR(255)
 );
+
+#ALTER TABLE JobsOpening_temp drop COLUMN page_html LONGTEXT;
+# select from JobsOpening_temp where page_html is not null;
+
+ALTER TABLE JobsOpening_temp drop COLUMN page_html;
+
+INSERT INTO JobsOpening (JobID, job_externalRef, job_title, job_url, DateRetrieved, JobSource)
+SELECT JobID, job_externalRef, job_title, job_url, DateRetrieved, JobSource
+FROM JobsOpening_temp;
+

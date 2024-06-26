@@ -74,7 +74,7 @@ def add_id(job, JobID, cursor, cnx, jobSource):
         
         # Commit the transaction
         cnx.commit()
-        print("Job inserted successfully.")
+        print(f"Job: {JobID} inserted successfully.")
     except mysql.Error as err:
         print(f"Error: {err}")
         cnx.rollback()
@@ -84,7 +84,8 @@ def extract_Seek_ID(cursor, cnx, driver):
     # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
     
     # driver = setup_driver(chrome_driver_path)    
-    driver.get("https://www.seek.com.au/jobs/")
+    # driver.get("https://www.seek.com.au/jobs/")
+    driver.get("https://www.seek.com.au/jobs/in-All-Melbourne-VIC")
     
     job_count = 0
     job_count_new = 0
@@ -109,7 +110,9 @@ def extract_Seek_ID(cursor, cnx, driver):
             print(f'Processing information on page {n + 1}')
             n += 1
             try:
-                driver.get(f'https://www.seek.com.au/jobs?page={n}')
+                # driver.get(f'https://www.seek.com.au/jobs?page={n}')
+                driver.get(f"https://www.seek.com.au/jobs/in-All-Melbourne-VIC?page={n}")
+
                 time.sleep(5)
             except Exception as e:
                 print(f"An error occurred: {e}")
@@ -186,15 +189,41 @@ def input_panel():
               """)
     return x
 
+def get_page_source(cursor, cnx, driver):
+    query = """
+            SELECT JobID, job_url FROM JobsOpening_temp WHERE page_html IS NULL AND JobSource <> "Monash" LIMIT 1
+            """
+    cursor.execute(query)
+    result = cursor.fetchone()
+    if result:
+        jid, jurl = result
+        driver.get(jurl)
+        
+        html_source = driver.page_source
+        soup = beautifulsoup(html_source, 'html.parser')
+      
+        html_ = str(soup.find("div", class_="y735df0 _1iz8dgs6y"))
+        
+        update_query = """
+                       UPDATE JobsOpening_temp 
+                       SET page_html = %s
+                       WHERE JobID = %s
+                       """
+        
+        cursor.execute(update_query, (html_, jid))
+        cnx.commit()
+    else:
+        print("No job found matching the criteria.")
+    
 
 def main():
         # sql connection and read credential
     open_msg()
     cursor, cnx = sql_connection(d)
-    chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
+    # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
     credentials_path = r"..\credential\login.txt"
     # chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
-
+    chrome_driver_path = r".\driver\chromedriver-win64\chromedriver.exe"
     x = input_panel()
 
     driver = setup_driver(chrome_driver_path)    
@@ -205,7 +234,18 @@ def main():
     elif x == "2":
         extract_Monash_ID(cursor, cnx, credentials_path, driver)
     elif x == "4":
+        while True:
+            x2 = input("""Which Seek cat?
+                       1. All
+                       2. Melb
+                       3. Syd
+                       """)
+          
         extract_Seek_ID(cursor, cnx, driver)
+    elif x == "5":
+        while True:
+            get_page_source(cursor, cnx, driver)
+            
     else:
         pass
              
