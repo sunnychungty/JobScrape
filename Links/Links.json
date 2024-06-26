@@ -1,0 +1,16 @@
+{
+    "Seek": {
+        "All": "https://www.seek.com.au/jobs",
+        "Syd": "https://www.seek.com.au/jobs/in-All-Sydney-NSW",        
+		"Melb": "https://www.seek.com.au/jobs/in-All-Melbourne-VIC"
+    },
+    "Monash": {
+        "All": "http://website2.com/chicago"
+    },
+    "GradAus": {
+        "All": "http://website3.com/miami"
+    },
+	  "GradConnection": {
+		"All": "http://website"
+}
+}

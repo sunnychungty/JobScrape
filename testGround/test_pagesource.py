@@ -15,6 +15,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import json
+
+f = open(r".\Links\Links.json")
+all_links = json.load(f)
 
 def setup_driver(chrome_driver_path):
     service = Service(chrome_driver_path)
@@ -76,7 +80,7 @@ databases = cursor.fetchall()
 for db in databases:
     print(db[0])
     
-    
+
     
 cursor.execute("USE MyJobsDB")  # Replace 'your_database' with the actual database name
 prefix = 'Jobs'  # Replace 'your_prefix' with the actual prefix
