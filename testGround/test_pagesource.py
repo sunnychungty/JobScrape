@@ -89,3 +89,21 @@ tables = cursor.fetchall()
 print(f"Tables starting with '{prefix}':")
 for table in tables:
     print(table[0])
+    
+    
+    
+cursor, cnx = sql_connection(d)    
+query = """
+        SELECT JobID, job_url FROM JobsOpening_temp WHERE page_html is Null and JobSource <> "Monash" LIMIT 1
+        """
+cursor.execute(query)
+# Fetch the result
+jid, jurl = cursor.fetchone()
+result
+driver.get(jurl)
+
+
+
+
+cursor.close()
+cnx.close()
