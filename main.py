@@ -118,8 +118,7 @@ def extract_Seek_ID(cursor, cnx, driver):
                 print(f"An error occurred: {e}")
         else:
             print(f"All job openings processed, {job_count} found, {job_count_new} are new")
-            driver.close()
-            return False
+
 
 
 def extract_Monash_ID(cursor, cnx, credentials_path, driver):
@@ -177,8 +176,6 @@ def extract_Monash_ID(cursor, cnx, credentials_path, driver):
                 print(f"An error occurred: {e}")
         else:
             print(f"All job openings processed, {job_count} found, {job_count_new} are new")
-            driver.close()
-            return False
 
 def input_panel():
     x = input("""What are we Scraping today?
@@ -224,30 +221,32 @@ def main():
     credentials_path = r"..\credential\login.txt"
     # chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
     chrome_driver_path = r".\driver\chromedriver-win64\chromedriver.exe"
-    x = input_panel()
-
-    driver = setup_driver(chrome_driver_path)    
     
-    if x == "1":
-        # extract_Monash_ID(cursor, cnx, credentials_path, driver)
-        extract_Seek_ID(cursor, cnx, driver)
-    elif x == "2":
-        extract_Monash_ID(cursor, cnx, credentials_path, driver)
-    elif x == "4":
-        while True:
-            x2 = input("""Which Seek cat?
-                       1. All
-                       2. Melb
-                       3. Syd
-                       """)
-          
-        extract_Seek_ID(cursor, cnx, driver)
-    elif x == "5":
-        while True:
-            get_page_source(cursor, cnx, driver)
-            
-    else:
-        pass
+    while True:
+        x = input_panel()
+
+        driver = setup_driver(chrome_driver_path)    
+        
+        if x == "1":
+            # extract_Monash_ID(cursor, cnx, credentials_path, driver)
+            extract_Seek_ID(cursor, cnx, driver)
+        elif x == "2":
+            extract_Monash_ID(cursor, cnx, credentials_path, driver)
+        elif x == "4":
+            while True:
+                x2 = input("""Which Seek cat?
+                           1. All
+                           2. Melb
+                           3. Syd
+                           """)
+              
+            extract_Seek_ID(cursor, cnx, driver)
+        elif x == "5":
+            while True:
+                get_page_source(cursor, cnx, driver)
+                
+        else:
+            pass
              
     # while(True):
     #     pass
