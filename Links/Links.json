@@ -2,7 +2,10 @@
     "Seek": {
         "All": "https://www.seek.com.au/jobs",
         "Syd": "https://www.seek.com.au/jobs/in-All-Sydney-NSW",        
-		"Melb": "https://www.seek.com.au/jobs/in-All-Melbourne-VIC"
+		"Melb": "https://www.seek.com.au/jobs/in-All-Melbourne-VIC",
+        "Data Analyst": "https://www.seek.com.au/Data-Analyst-jobs",
+        "Data Scientist": "https://www.seek.com.au/Data-Scientist-jobs",
+        "Analyst": "https://www.seek.com.au/Analyst-jobs"
     },
     "Monash": {
         "All": "http://website2.com/chicago"
