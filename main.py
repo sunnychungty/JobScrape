@@ -80,11 +80,6 @@ def add_id(job, JobID, cursor, cnx, jobSource):
         cnx.rollback()
         
 def extract_Seek_ID(cursor, cnx, driver):
-    # chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
-    # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
-    
-    # driver = setup_driver(chrome_driver_path)    
-    # driver.get("https://www.seek.com.au/jobs/")
     driver.get("https://www.seek.com.au/jobs/in-All-Melbourne-VIC")
     
     job_count = 0
@@ -94,7 +89,7 @@ def extract_Seek_ID(cursor, cnx, driver):
         html_source = driver.page_source
         soup = beautifulsoup(html_source, 'html.parser')
         
-        containers = soup.find_all('article', class_ = "y735df0")
+        containers = soup.find_all('article', class_="y735df0")
         
         jobs = re.findall(r'data\-job\-id\=\"(\d+)\"', str(containers))
 
@@ -106,19 +101,17 @@ def extract_Seek_ID(cursor, cnx, driver):
             else:
                 add_id("", jobID, cursor, cnx, "Seek")
                 job_count_new += 1
-        if soup.find('span', class_ = "y735df0 _1iz8dgs8 _1iz8dgs4"):
+        if soup.find('span', class_="y735df0 _1iz8dgs8 _1iz8dgs4"):
             print(f'Processing information on page {n + 1}')
             n += 1
             try:
-                # driver.get(f'https://www.seek.com.au/jobs?page={n}')
                 driver.get(f"https://www.seek.com.au/jobs/in-All-Melbourne-VIC?page={n}")
-
                 time.sleep(5)
             except Exception as e:
                 print(f"An error occurred: {e}")
         else:
             print(f"All job openings processed, {job_count} found, {job_count_new} are new")
-
+            break  # Exit the loop when all job openings are processed
 
 
 def extract_Monash_ID(cursor, cnx, credentials_path, driver):
@@ -137,7 +130,7 @@ def extract_Monash_ID(cursor, cnx, credentials_path, driver):
     time.sleep(5)
 
     # Click the submit button
-    click_button(driver, submit_button_id)  
+    click_button(driver, submit_button_id)
 
     job_count = 0
     job_count_new = 0
@@ -151,7 +144,6 @@ def extract_Monash_ID(cursor, cnx, credentials_path, driver):
     
         # Get job links in one page
         jobs = jobs_container.find_all('a', class_='job-link')
-        
 
         for job in jobs:
             job_count += 1
@@ -159,7 +151,7 @@ def extract_Monash_ID(cursor, cnx, credentials_path, driver):
             if jobID_match:
                 jobID = jobID_match.group(1)
                 if is_dup(jobID, cursor, cnx):
-                    print(f"jobID {jobID} already exist in DB")
+                    print(f"jobID {jobID} already exists in DB")
                     continue
                 else:
                     add_id(job, jobID, cursor, cnx, "Monash")
@@ -170,12 +162,13 @@ def extract_Monash_ID(cursor, cnx, credentials_path, driver):
             print(f'Processing information on page {n + 1}')
             n += 1
             try:
-                driver.get('https://careers.pageuppeople.com/' + soup.find('a', class_='more-link button')['href'])
+                driver.get('https://careers.pageuppeople.com/' + more_jobs_button['href'])
                 time.sleep(5)
             except Exception as e:
                 print(f"An error occurred: {e}")
         else:
             print(f"All job openings processed, {job_count} found, {job_count_new} are new")
+            break  # Exit the loop when all job openings are processed
 
 def input_panel():
     x = input("""What are we Scraping today?
@@ -214,12 +207,10 @@ def get_page_source(cursor, cnx, driver):
     
 
 def main():
-        # sql connection and read credential
+    # SQL connection and read credential
     open_msg()
     cursor, cnx = sql_connection(d)
-    # chrome_driver_path = r"C:\Users\Sunny\Downloads\chromedriver-win64\chromedriver.exe"
     credentials_path = r"..\credential\login.txt"
-    # chrome_driver_path = r"C:\Users\schu0091\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe"
     chrome_driver_path = r".\driver\chromedriver-win64\chromedriver.exe"
     
     while True:
@@ -228,7 +219,7 @@ def main():
         driver = setup_driver(chrome_driver_path)    
         
         if x == "1":
-            # extract_Monash_ID(cursor, cnx, credentials_path, driver)
+            extract_Monash_ID(cursor, cnx, credentials_path, driver)
             extract_Seek_ID(cursor, cnx, driver)
         elif x == "2":
             extract_Monash_ID(cursor, cnx, credentials_path, driver)
@@ -239,18 +230,12 @@ def main():
                            2. Melb
                            3. Syd
                            """)
-              
-            extract_Seek_ID(cursor, cnx, driver)
+                extract_Seek_ID(cursor, cnx, driver)  # Call based on x2 input
         elif x == "5":
             while True:
                 get_page_source(cursor, cnx, driver)
-                
         else:
             pass
-             
-    # while(True):
-    #     pass
-
 
 if __name__ == "__main__":
     main()
