@@ -107,3 +107,7 @@ driver.get(jurl)
 
 cursor.close()
 cnx.close()
+
+import json
+with open(r'../Links/Links.json', 'r') as file:
+    f = json.load(file)["Seek"]

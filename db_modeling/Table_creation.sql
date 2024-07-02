@@ -35,11 +35,12 @@ CREATE TABLE JobsOpening_temp (
 
 -- Job_app Table
 CREATE TABLE Job_app (
-    JobID INT PRIMARY KEY,
+    JobAppID INT PRIMARY KEY,
     profile_match DECIMAL(5, 2),
     app_status bit,
-    date_retrieved DATE,
-    FOREIGN KEY (JobID) REFERENCES JobsOpening(JobID)
+    app_date DATE,
+    JobID INT,
+    company varchar(255)
 );
 
 -- Company Table
@@ -51,6 +52,14 @@ CREATE TABLE Company (
     contact VARCHAR(255)
 );
 
+-- Question Table
+CREATE TABLE Questions (
+    QID INT PRIMARY KEY AUTO_INCREMENT,
+    JobAppID INT,
+    Question LONGTEXT, 
+    Answer LONGTEXT,
+    FOREIGN KEY (JobAppID) REFERENCES Job_app(JobAppID)
+);
 #ALTER TABLE JobsOpening_temp drop COLUMN page_html LONGTEXT;
 # select from JobsOpening_temp where page_html is not null;
 

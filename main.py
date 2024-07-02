@@ -71,16 +71,11 @@ def main():
         elif x == "2":
             extract_Monash_ID(cursor, cnx, credentials_path, driver)
         elif x == "4":
-            while True:
-                x2 = input("""Which Seek cat?
-                           1. All
-                           2. Melb
-                           3. Syd
-                           """)
-                extract_Seek_ID(cursor, cnx, driver)  # Call based on x2 input
+            extract_Seek_ID(cursor, cnx, driver)
         elif x == "5":
             while True:
                 get_page_source(cursor, cnx, driver)
+                break  # Exit nested loop after processing
         else:
             pass
 

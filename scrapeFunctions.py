@@ -4,6 +4,7 @@ Created on Mon Jun 17 11:51:58 2024
 
 @author: schu0091
 """
+import json
 import time
 from bs4 import BeautifulSoup as beautifulsoup
 import re
@@ -162,8 +163,33 @@ def add_id(job, JobID, cursor, cnx, jobSource):
         cnx.rollback()
 
 
+def load_seek_urls(json_path):
+    with open(json_path, 'r') as file:
+        return json.load(file)
+
 def extract_Seek_ID(cursor, cnx, driver):
-    driver.get("https://www.seek.com.au/jobs/in-All-Melbourne-VIC")
+    seek_urls = load_seek_urls(r'Links\Links.json')
+    categories = list(seek_urls["Seek"].keys())
+    
+    while True:
+        print("Select a category to scrape from Seek:")
+        for i, category in enumerate(categories, 1):
+            print(f"{i}. {category}")
+        choice = input("Enter the number of your choice: ")
+        
+        try:
+            choice_index = int(choice) - 1
+            if 0 <= choice_index < len(categories):
+                selected_category = categories[choice_index]
+                url = seek_urls["Seek"][selected_category]
+                print(f"Scraping data from {url}...")
+                break
+            else:
+                print("Invalid choice. Please try again.")
+        except ValueError:
+            print("Invalid input. Please enter a number corresponding to your choice.")
+
+    driver.get(url)
     
     job_count = 0
     job_count_new = 0
@@ -188,7 +214,7 @@ def extract_Seek_ID(cursor, cnx, driver):
             print(f'Processing information on page {n + 1}')
             n += 1
             try:
-                driver.get(f"https://www.seek.com.au/jobs/in-All-Melbourne-VIC?page={n}")
+                driver.get(f"{url}?page={n}")
                 time.sleep(5)
             except Exception as e:
                 print(f"An error occurred: {e}")
