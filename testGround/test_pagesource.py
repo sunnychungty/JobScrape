@@ -61,13 +61,13 @@ while True:
     
 # job_containers = soup.find_all('article', class_='y735df0 y735df1 _1iz8dgs7i _1iz8dgs6e _1iz8dgs9q _1iz8dgs8m _1iz8dgsh _1iz8dgs66 _1iz8dgs5e _12jtennb _12jtenn9 _12jtenna _94v4w18 _94v4w1b _1iz8dgs32 _1iz8dgs35')
 
-with open (r'../credential/page_source_test.txt') as f:
+with open (r'../credential/page_source_test.txt', encoding = 'utf-8') as f:
     doc_ = f.read()
 # doc_ = doc_.replace("\n", "")
 soup = beautifulsoup(doc_, 'html.parser')
 
-if soup.find('a', class_ = 'more-link button'):
-    print(soup.find('a', class_ = 'more-link button')['href'])
+if soup.find('div', class_ = "y735df0 _1pehz540"):
+    print(soup.find('div', class_ = "y735df0 _1pehz540"))
 
 #     # print(job.get_text(strip=True))
 #     # print(job['href'])

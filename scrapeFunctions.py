@@ -278,3 +278,44 @@ def extract_Monash_ID(cursor, cnx, credentials_path, driver):
         else:
             print(f"All job openings processed, {job_count} found, {job_count_new} are new")
             break  # Exit the loop when all job openings are processed
+            
+            
+            
+def scrape_html(cursor, cnx):
+    query = 'SELECT JobID, page_html FROM JobsOpening_temp WHERE JobSource = "Seek" AND page_html IS NOT NULL AND scrape_status IS NULL LIMIT 1;'
+    cursor.execute(query)
+    row = cursor.fetchone()
+    
+
+    if row:
+        JobID, result = row
+        try:
+            job_title = re.search(r"\"job-detail-title\"\>(.+)\<\/h1\>", result).group(1) if re.search(r"\"job-detail-title\"\>(.+)\<\/h1\>", result) else "null"
+            print(job_title)
+            company_name = re.search(r"\"advertiser-name\"\>(.+?)\<\/span\>", result).group(1) if re.search(r"\"advertiser-name\"\>(.+?)\<\/span\>", result) else "null"
+            salary = re.search(r"job-detail-salary\"\>\$(.+?)\<\/span\>", result).group(1) if re.search(r"job-detail-salary\"\>\$(.+?)\<\/span\>", result) else "null"
+            location = re.search(r"\"job-detail-location\"\>(.+?)\<\/span\>", result).group(1) if re.search(r"\"job-detail-location\"\>(.+?)\<\/span\>", result) else "null"
+            print(location)
+
+            soup = beautifulsoup(result, 'html.parser')
+            job_desc = soup.find('div', class_="y735df0 _1pehz540").text.strip() if soup.find('div', class_="y735df0 _1pehz540") else "null"
+            
+            update_query = """
+                           UPDATE JobsOpening_temp 
+                           SET job_title = %s,
+                               company_name = %s,
+                               salary = %s,
+                               Location = %s,
+                               job_desc = %s,
+                               scrape_status = %s
+                           WHERE JobID = %s
+                           """
+            cursor.execute(update_query, (job_title, company_name, salary, location, job_desc, 1, JobID))
+            print(f"Updated JobID {JobID}")
+            cnx.commit()
+            
+        except mysql.Error as err:
+            print(f"Error: {err}")
+            cnx.rollback()
+    else:
+        print("No matching records found")

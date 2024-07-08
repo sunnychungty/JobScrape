@@ -39,7 +39,7 @@ def get_page_source(cursor, cnx, driver):
         html_source = driver.page_source
         soup = beautifulsoup(html_source, 'html.parser')
       
-        html_ = str(soup.find("div", class_="y735df0 _1iz8dgs6y"))
+        html_ = str(soup)
         
         update_query = """
                        UPDATE JobsOpening_temp 
@@ -75,7 +75,10 @@ def main():
         elif x == "5":
             while True:
                 get_page_source(cursor, cnx, driver)
-                break  # Exit nested loop after processing
+                # break  # Exit nested loop after processing
+        elif x == "6":
+            while True:
+                scrape_html(cursor, cnx)
         else:
             pass
 
