@@ -4,11 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-<<<<<<< HEAD
-recent_files = ['main.py', 'scrapeFunctions.py', 'testGround\\test_pagesource.py']
-=======
 recent_files = ['..\\..\\.spyder-py3\\temp.py', 'main.py']
->>>>>>> 4c6b73e75df6af122980e5988cab3c93b9f07c0d
 
 [main]
 version = 0.2.0
