@@ -29,9 +29,21 @@ WHERE
 
 
 UPDATE Job_app
-SET app_status = 'Applied'
-WHERE JobID = 989;
+SET job_desc = ""
+WHERE JobID = 2678;
 
 select * from Job_app;
 
 ALTER TABLE Job_app MODIFY COLUMN app_status VARCHAR(20);
+
+
+SELECT * FROM JobsOpening_temp where job_externalRef = "3918986985";
+SELECT * FROM JobsOpening_temp where company_name = "South East Water";
+SELECT * FROM JobsOpening_temp where JobID = "2255";
+
+
+SELECT * FROM JobsOpening_temp order by JobID desc limit 1;
+
+
+select * from JobsOpening_temp where JobSource = "Monash" order by "JobID" desc;
+
