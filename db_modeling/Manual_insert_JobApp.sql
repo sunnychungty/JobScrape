@@ -4,8 +4,8 @@ INSERT INTO Job_app (JobAppID, app_status, app_date, JobID, company, latest_stat
 VALUES (@nextJobAppID, 
 		'Applied', 
 		Current_date(), 
-		'2258', 
-		(Select company_name from JobsOpening_temp where JobID = "2258"),
+		'2679', 
+		(Select company_name from JobsOpening_temp where JobID = "2679"),
         Current_date());
 
 
