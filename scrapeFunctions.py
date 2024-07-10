@@ -211,7 +211,7 @@ def extract_Seek_ID(cursor, cnx, driver):
                 add_id("", jobID, cursor, cnx, "Seek")
                 job_count_new += 1
         # change this class_
-        if soup.find('span', class_="_1hjf8j50 c1tjymda"):
+        if soup.find('span', class_="_1hjf8j50 c1tjym5e c1tjym5a c1tjymfe c1tjymo c1tjyma2 c1tjym8u f8smf40"):
             print(f'Processing information on page {n + 1}')
             n += 1
             try:
