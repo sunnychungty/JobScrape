@@ -23,6 +23,8 @@ def input_panel():
               2. Monash
               3. Unimelb
               4. Seek
+              5. Get page Source
+              6. Scrape page Source
               """)
     return x
 
