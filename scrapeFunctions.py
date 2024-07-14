@@ -198,7 +198,7 @@ def extract_Seek_ID(cursor, cnx, driver):
         html_source = driver.page_source
         soup = beautifulsoup(html_source, 'html.parser')
         # Change this class_
-        containers = soup.find_all('article', class_="_1hjf8j50 _1hjf8j51 c1tjym7i c1tjym6e c1tjym9q c1tjym8m c1tjymh c1tjym66 c1tjym5e oxvztvb oxvztv9 oxvztva _1mayx1r18 _1mayx1r1b c1tjym32 c1tjym35")
+        containers = soup.find_all('article', class_="_1igte520")
         
         jobs = re.findall(r'data\-job\-id\=\"(\d+)\"', str(containers))
 
@@ -211,7 +211,7 @@ def extract_Seek_ID(cursor, cnx, driver):
                 add_id("", jobID, cursor, cnx, "Seek")
                 job_count_new += 1
         # change this class_
-        if soup.find('span', class_="_1hjf8j50 c1tjym5e c1tjym5a c1tjymfe c1tjymo c1tjyma2 c1tjym8u f8smf40"):
+        if soup.find('span', class_="_1igte520 _4cz7565e _4cz7565a _4cz756fe _4cz756o _4cz756a2 _4cz7568u _1vx5a3c0"):
             print(f'Processing information on page {n + 1}')
             n += 1
             try:
@@ -320,3 +320,45 @@ def scrape_html(cursor, cnx):
             cnx.rollback()
     else:
         print("No matching records found")
+        
+        
+        
+def extract_all_categories(cursor, cnx, driver):
+    seek_urls = load_seek_urls(r'Links\Links.json')
+    categories = list(seek_urls["Seek"].keys())
+    
+    for category in categories:
+        url = seek_urls["Seek"][category]
+        print(f"Scraping data from {url}...")
+
+        driver.get(url)
+        
+        job_count = 0
+        job_count_new = 0
+        n = 1
+        while True:
+            html_source = driver.page_source
+            soup = beautifulsoup(html_source, 'html.parser')
+            containers = soup.find_all('article', class_="_1igte520")
+            
+            jobs = re.findall(r'data\-job\-id\=\"(\d+)\"', str(containers))
+
+            for jobID in jobs:
+                job_count += 1
+                if is_dup(jobID, cursor, cnx):
+                    print(f"jobID {jobID} already exist in DB")
+                    continue
+                else:
+                    add_id("", jobID, cursor, cnx, "Seek")
+                    job_count_new += 1
+            if soup.find('span', class_="_1igte520 _4cz7565e _4cz7565a _4cz756fe _4cz756o _4cz756a2 _4cz7568u _1vx5a3c0"):
+                print(f'Processing information on page {n + 1}')
+                n += 1
+                try:
+                    driver.get(f"{url}?page={n}")
+                    time.sleep(5)
+                except Exception as e:
+                    print(f"An error occurred: {e}")
+            else:
+                print(f"All job openings processed for category {category}, {job_count} found, {job_count_new} are new")
+                break
