@@ -25,6 +25,7 @@ def input_panel():
               4. Seek
               5. Get page Source
               6. Scrape page Source
+              7. Everything
               """)
     return x
 
@@ -77,10 +78,11 @@ def main():
         elif x == "5":
             while True:
                 get_page_source(cursor, cnx, driver)
-                # break  # Exit nested loop after processing
         elif x == "6":
             while True:
                 scrape_html(cursor, cnx)
+        elif x == "7":
+            extract_Seek_ID(cursor, cnx, driver, all_categories=True)
         else:
             pass
 
