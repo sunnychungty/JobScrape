@@ -202,7 +202,7 @@ def extract_Seek_ID(cursor, cnx, driver, all_categories=False):
         while True:
             html_source = driver.page_source
             soup = beautifulsoup(html_source, 'html.parser')
-            containers = soup.find_all('article', class_="_1igte520")
+            containers = soup.find_all('article', class_="v12uij0")
             
             jobs = re.findall(r'data\-job\-id\=\"(\d+)\"', str(containers))
 
@@ -214,7 +214,7 @@ def extract_Seek_ID(cursor, cnx, driver, all_categories=False):
                 else:
                     add_id("", jobID, cursor, cnx, "Seek")
                     job_count_new += 1
-            if soup.find('span', class_="_1igte520 _4cz7565e _4cz7565a _4cz756fe _4cz756o _4cz756a2 _4cz7568u _1vx5a3c0"):
+            if soup.find('span', class_="v12uij0 onhoxh5e onhoxh5a onhoxhfe onhoxho onhoxha2 onhoxh8u _1q7ujds0"):
                 print(f'Processing information on page {n + 1}')
                 n += 1
                 try:

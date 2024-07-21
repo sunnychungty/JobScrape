@@ -4,13 +4,12 @@ INSERT INTO Job_app (JobAppID, app_status, app_date, JobID, company, latest_stat
 VALUES (@nextJobAppID, 
 		'Applied', 
 		Current_date(), 
-		'2679', 
-		(Select company_name from JobsOpening_temp where JobID = "2679"),
+		'5871', 
+		(Select company_name from JobsOpening_temp where JobID = "5871"),
         Current_date());
 
 
 UPDATE Job_app
-<<<<<<< HEAD
 SET latest_status_update = CURRENT_DATE 
 WHERE JobAppID <6;
 
@@ -29,11 +28,9 @@ select JobID, page_html from JobsOpening_temp where JobSource = "Seek" and page_
 
 
 select count(*) from JobsOpening_temp where page_html is null and JobSource = "Seek";
-=======
 SET latest_status_update = current_date()
 WHERE JobAppID = 6;
 
 select * from JobsOpening_temp order by JobID desc limit 1;
 
 select * from Job_app;
->>>>>>> 4c6b73e75df6af122980e5988cab3c93b9f07c0d
