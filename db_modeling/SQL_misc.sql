@@ -28,11 +28,12 @@ WHERE
     ja.JobID IS NULL;
 
 
-UPDATE Job_app
-SET job_desc = ""
-WHERE JobID = 2678;
+UPDATE JobsOpening_temp
+SET job_desc = '
+'
+WHERE JobID = 9851;
 
-select * from Job_app;
+select * from Job_app order by JobID desc limit 1;
 
 ALTER TABLE Job_app MODIFY COLUMN app_status VARCHAR(20);
 
@@ -45,5 +46,5 @@ SELECT * FROM JobsOpening_temp where JobID = "2255";
 SELECT * FROM JobsOpening_temp order by JobID desc limit 1;
 
 
-select * from JobsOpening_temp where JobSource = "Monash" order by "JobID" desc;
+select * from JobsOpening_temp where JobSource = "Monash" and JobID = "667418";
 
